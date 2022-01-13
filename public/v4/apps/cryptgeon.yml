@@ -1,0 +1,42 @@
+captainVersion: 4
+services:
+  $$cap_appname-memcached:
+    image: 'memcached:1-alpine'
+    restart: always
+    entrypoint: memcached -m 128M -I '$$cap_size_limit'
+  $$cap_appname-cryptgeon:
+    image: 'cupcakearmy/cryptgeon:$$cap_version'
+    restart: always
+    depends_on:
+      - $$cap_appname-memcached
+    environment:
+      SIZE_LIMIT: $$cap_size_limit
+    caproverExtra:
+      containerHttpPort: '5000'
+caproverOneClickApp:
+  variables:
+    - id: $$cap_version
+      label: Cryptgeon Version
+      defaultValue: 1.3.3
+      description: >-
+        Check out their Docker page for the valid tags
+        https://hub.docker.com/r/cupcakearmy/cryptgeon/tags
+      validRegex: '/^([^\s^\/])+$/'
+    - id: $$cap_size_limit
+      label: Size Limit
+      defaultValue: 4M
+      description: Use like 4M (MB) or 1G (GB)
+      validRegex: '/^([^\s^\/])+$/'
+  instructions:
+    start: >-
+      cryptgeon is a secure, open source sharing note or file service inspired
+      by PrivNote.
+
+      More details: https://github.com/cupcakearmy/cryptgeon
+    end: Cryptgeon has been successfully deployed!
+  displayName: Cryptgeon
+  isOfficial: true
+  description: >-
+    cryptgeon is a secure, open source sharing note or file service inspired by
+    PrivNote.
+  documentation: 'See https://github.com/cupcakearmy/cryptgeon'
